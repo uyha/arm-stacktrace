@@ -1,0 +1,21 @@
+list(FIND Elf_FIND_COMPONENTS STATIC STATIC_REQUESTED)
+list(FIND Elf_FIND_COMPONENTS SHARED SHARED_REQUESTED)
+
+if (STATIC_REQUESTED GREATER -1 AND SHARED_REQUESTED GREATER -1)
+    message(FATAL_ERROR "STATIC AND SHARED libraries cannot be requested at the same time")
+elseif (SHARED_REQUESTED GREATER -1)
+    find_library(Elf_LIBRARY libelf.so)
+    set(LIBRARY_TYPE SHARED)
+else ()
+    find_library(Elf_LIBRARY libelf.a)
+    set(LIBRARY_TYPE STATIC)
+endif ()
+
+if (Elf_LIBRARY)
+    add_library(Elf ${LIBRARY_TYPE} IMPORTED)
+    add_library(Elf::Elf ALIAS Elf)
+    set_target_properties(Elf PROPERTIES IMPORTED_LOCATION "${Elf_LIBRARY}")
+endif ()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Elf REQUIRED_VARS Elf_LIBRARY)

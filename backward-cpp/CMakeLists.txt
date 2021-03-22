@@ -1,0 +1,10 @@
+find_package(Dwarf REQUIRED)
+find_package(Elf REQUIRED)
+find_package(ZLIB REQUIRED)
+
+add_library(backward INTERFACE)
+add_library(backward::backward ALIAS backward)
+target_link_libraries(backward INTERFACE Dwarf::Dwarf Elf::Elf ZLIB::ZLIB dl)
+target_include_directories(backward INTERFACE include)
+target_compile_definitions(backward INTERFACE BACKWARD_HAS_DWARF=1 BACKWARD_HAS_LIBUNWIND=1)
+target_compile_options(backward INTERFACE -funwind-tables -fno-omit-frame-pointer -rdynamic)
